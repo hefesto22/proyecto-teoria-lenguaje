@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -11,7 +12,6 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-
     use HasApiTokens;
 
     /** @use HasFactory<\Database\Factories\UserFactory> */
@@ -20,11 +20,8 @@ class User extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
 
-    use HasFactory, Notifiable;
-
-
     /**
-     * Los atributos que se pueden asignar masivamente.
+     * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
@@ -32,11 +29,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id', // IMPORTANTE para asignar el rol al usuario
     ];
 
     /**
-     * Los atributos que deben ocultarse al serializar.
+     * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
@@ -57,7 +53,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Los atributos que deben ser convertidos a tipos nativos.
+     * Get the attributes that should be cast.
      *
      * @return array<string, string>
      */
@@ -67,13 +63,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    /**
-     * Relación con el modelo Role.
-     */
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
     }
 }

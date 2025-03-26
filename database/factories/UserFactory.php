@@ -26,14 +26,16 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-       return [
-            'username' => 'GRUPO#3',
-            'name' => 'Teoria de lenguas',
-            'email' => 'pruebas.1japle.es@gmail.com',
-            'password' => bcrypt('11111111'), 
+        return [
+            'username' => 'GRUPO4',
+            'name' => 'Teoria de lengua',
+            'email' => 'es@gmail.com',
+            'password' => bcrypt('11111111'),
             'remember_token' => Str::random(10),
             'avatar' => null,
-            'role' => 'ADMINISTRADOR'
+            'role' => 'ADMINISTRADOR',  // Asignar directamente el rol como string
+            'fechanac' => null,
+            'genero' => null,
         ];
     }
 

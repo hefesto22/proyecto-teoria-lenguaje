@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,9 +12,28 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Crear tabla de roles
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // admin, gerente, usuario
+            $table->timestamps();
+        });
+
+        // Insertar roles por defecto
+        DB::table('roles')->insert([
+            ['name' => 'admin', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'gerente', 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'usuario', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
+        // Crear tabla de usuarios con relación a roles
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+
             $table->string('username',50)->unique();
+=======
+            $table->foreignId('role_id')->constrained()->default(3); // 3: usuario
+
             $table->string('name');
             $table->string('email')->unique();
             $table->string('password');
@@ -46,8 +66,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('roles');
     }
 };

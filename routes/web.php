@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ImagenController;
+use App\Http\Controllers\ClienteController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -18,6 +19,7 @@ Route::delete('/imagenes/{id}', [ImagenController::class, 'destroy'])->name('ima
 Route::resource('users', UserController::class);
 Route::resource('categorias', CategoriaController::class);
 Route::resource('productos', ProductoController::class);
+Route::resource('clientes', ClienteController::class);
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

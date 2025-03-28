@@ -33,7 +33,7 @@ class CategoriaController extends Controller
     {
         return Inertia::render('categorias/create');
     }
-
+    
     /**
      * Guardar una nueva categoría.
      */

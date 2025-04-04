@@ -7,6 +7,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\PedidoController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -20,6 +21,12 @@ Route::resource('users', UserController::class);
 Route::resource('categorias', CategoriaController::class);
 Route::resource('productos', ProductoController::class);
 Route::resource('clientes', ClienteController::class);
+// routes/api.php o web.php
+Route::resource('pedidos', PedidoController::class);
+Route::put('/pedidos/{pedido}/pagar', [PedidoController::class, 'marcarComoPagado'])
+    ->name('pedidos.marcarPagado');
+
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

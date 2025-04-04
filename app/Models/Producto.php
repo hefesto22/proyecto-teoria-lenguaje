@@ -38,6 +38,18 @@ class Producto extends Model
     // Relación con imágenes
     public function imagenes()
     {
-        return $this->hasMany(Imagen::class);
+        return $this->hasMany(Imagen::class, 'producto_id');
+    }
+    
+    public function imagenPrincipal()
+    {
+        return $this->hasOne(Imagen::class, 'producto_id')->latest(); // o first si prefieres
+    }
+
+    public function pedidos()
+    {
+        return $this->belongsToMany(Pedido::class, 'pedido_producto')
+            ->withPivot(['cantidad', 'precio', 'total'])
+            ->withTimestamps();
     }
 }

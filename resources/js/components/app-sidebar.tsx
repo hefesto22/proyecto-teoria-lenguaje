@@ -18,7 +18,7 @@ import {
     LayoutGrid,
     ShoppingBasket,
     Album,
-    ChartBarStacked,
+    ShoppingCart,
 } from 'lucide-react';
 import AppLogo from './app-logo';
 
@@ -47,17 +47,21 @@ export function AppSidebar() {
             mainNavItems.push(
                 { title: 'Usuarios', href: '/users', icon: UserCog },
                 { title: 'Clientes', href: '/clientes', icon: User },
+                { title: 'Pedidos', href: '/pedidos', icon: ShoppingCart },
                 { title: 'Categorias', href: '/categorias', icon: Album },
                 { title: 'Productos', href: '/productos', icon: ShoppingBasket },
                 { title: 'Facturación', href: '/facturacion', icon: Album },
+                
             );
             break;
         case 'gerente':
             mainNavItems.push(
                 { title: 'Clientes', href: '/clientes', icon: User },
+                { title: 'Pedidos', href: '/pedidos', icon: ShoppingCart },
                 { title: 'Categorias', href: '/categorias', icon: Album },
                 { title: 'Productos', href: '/productos', icon: ShoppingBasket },
                 { title: 'Facturación', href: '/facturacion', icon: Album },
+                
             );
             break;
         case 'usuario':

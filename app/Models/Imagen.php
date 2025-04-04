@@ -9,7 +9,7 @@ class Imagen extends Model
 {
     use HasFactory;
 
-    protected $table = 'imagenes'; // 👈 Esto soluciona el error
+    protected $table = 'imagenes'; // Esto soluciona el error de Redireccion de guardado
 
     protected $fillable = [
         'producto_id',

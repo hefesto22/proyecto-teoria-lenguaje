@@ -11,6 +11,7 @@ class Pedido extends Model
 
     protected $fillable = [
         'cliente_id',
+        'user_id',       // 👈 Agregado para permitir guardarlo con create()
         'total',
         'monto_pagado',
         'estado',
@@ -34,5 +35,11 @@ class Pedido extends Model
         return $this->belongsToMany(Producto::class, 'pedido_producto')
                     ->withPivot(['cantidad', 'precio', 'total'])
                     ->withTimestamps();
+    }
+
+    // Relación con el usuario que creó el pedido
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -11,6 +11,7 @@ return new class extends Migration {
         Schema::create('pedidos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade'); // referencia a tabla clientes
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // referencia a tabla users
             $table->decimal('total', 10, 2)->default(0);
             $table->decimal('monto_pagado', 10, 2)->default(0);
             $table->enum('estado', ['pendiente', 'espera', 'pagado', 'cancelado'])->default('pendiente');
@@ -35,3 +36,4 @@ return new class extends Migration {
         Schema::dropIfExists('pedidos');
     }
 };
+

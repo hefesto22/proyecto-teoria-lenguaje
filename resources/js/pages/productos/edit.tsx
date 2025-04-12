@@ -16,6 +16,7 @@ interface Imagen {
 }
 
 interface Producto {
+    isv: null;
     id: number;
     nombre: string;
     precio: number;
@@ -30,10 +31,13 @@ interface Props extends InertiaPageProps {
     categorias: Categoria[];
 }
 
+// ...importaciones sin cambios
+
 export default function Edit({ producto, categorias }: Props) {
     const [form, setForm] = useState({
         nombre: producto.nombre,
         precio: String(producto.precio),
+        isv: producto.hasOwnProperty("isv") && producto.isv !== null ? String(producto.isv) : "", // 👈 isv
         stock: String(producto.stock),
         categoria_id: producto.categoria_id,
         activo: producto.activo,
@@ -77,30 +81,29 @@ export default function Edit({ producto, categorias }: Props) {
         });
     };
 
-const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        setErrors({});
 
-    const formData = new FormData();
+        const formData = new FormData();
+        formData.append("_method", "PUT");
+        formData.append("nombre", form.nombre);
+        formData.append("precio", form.precio);
+        formData.append("isv", form.isv !== "" ? form.isv : ""); // 👈 isv incluido
+        formData.append("stock", form.stock);
+        formData.append("categoria_id", String(form.categoria_id));
+        formData.append("activo", form.activo ? "1" : "0");
 
-    formData.append("_method", "PUT"); // 👈 ¡IMPORTANTE!
-    formData.append("nombre", form.nombre);
-    formData.append("precio", form.precio);
-    formData.append("stock", form.stock);
-    formData.append("categoria_id", String(form.categoria_id));
-    formData.append("activo", form.activo ? "1" : "0");
+        form.imagenes.forEach((img, i) => {
+            formData.append(`imagenes[${i}]`, img);
+        });
 
-    form.imagenes.forEach((img, i) => {
-        formData.append(`imagenes[${i}]`, img);
-    });
-
-    router.post(`/productos/${producto.id}`, formData, {
-        forceFormData: true,
-        preserveScroll: true,
-        onError: (err) => setErrors(err),
-    });
-};
-
+        router.post(`/productos/${producto.id}`, formData, {
+            forceFormData: true,
+            preserveScroll: true,
+            onError: (err) => setErrors(err),
+        });
+    };
 
     return (
         <AppLayout>
@@ -136,16 +139,29 @@ const handleSubmit = (e: React.FormEvent) => {
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium">Stock</label>
+                            <label className="block text-sm font-medium">ISV (opcional)</label>
                             <input
                                 type="number"
-                                name="stock"
-                                value={form.stock}
+                                name="isv"
+                                step="0.01"
+                                value={form.isv}
                                 onChange={handleChange}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.stock && <p className="text-red-500 text-sm">{errors.stock}</p>}
+                            {errors.isv && <p className="text-red-500 text-sm">{errors.isv}</p>}
                         </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium">Stock</label>
+                        <input
+                            type="number"
+                            name="stock"
+                            value={form.stock}
+                            onChange={handleChange}
+                            className="w-full border rounded px-3 py-2 mt-1"
+                        />
+                        {errors.stock && <p className="text-red-500 text-sm">{errors.stock}</p>}
                     </div>
 
                     <div>
@@ -175,7 +191,6 @@ const handleSubmit = (e: React.FormEvent) => {
                         <label>Activo</label>
                     </div>
 
-                    {/* Imágenes existentes */}
                     {producto.imagenes.length > 0 && (
                         <div>
                             <label className="block text-sm font-medium mb-2">Imágenes actuales</label>
@@ -231,3 +246,4 @@ const handleSubmit = (e: React.FormEvent) => {
         </AppLayout>
     );
 }
+

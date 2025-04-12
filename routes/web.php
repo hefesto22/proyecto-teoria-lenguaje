@@ -25,6 +25,7 @@ Route::resource('clientes', ClienteController::class);
 Route::resource('pedidos', PedidoController::class);
 Route::put('/pedidos/{pedido}/pagar', [PedidoController::class, 'marcarComoPagado'])
     ->name('pedidos.marcarPagado');
+    Route::get('/pedidos/{pedido}', [PedidoController::class, 'show'])->name('pedidos.show');
 
 
 

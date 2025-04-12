@@ -16,6 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->decimal('precio', 10, 2);
+            $table->decimal('isv', 8, 2)->nullable(); // Campo ISV opcional
             $table->integer('stock')->default(0);
             $table->foreignId('categoria_id')->constrained('categorias')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

@@ -28,12 +28,11 @@ interface Props extends InertiaPageProps {
     filters: {
         search?: string;
     };
-    [key: string]: unknown; // ✅ para que sea compatible con Inertia
+    [key: string]: unknown;
 }
 
 export default function Index() {
     const { categorias, filters } = usePage<Props>().props;
-
     const [search, setSearch] = useState(filters.search || "");
 
     const handleFilter = () => {
@@ -65,7 +64,7 @@ export default function Index() {
             <div className="flex flex-col gap-4 p-4 md:gap-6 md:p-6">
                 <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-4 md:p-6">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
-                        <h2 className="text-xl font-bold text-gray-800">Categorías</h2>
+                        <h2 className="text-xl font-bold text-gray-800">Tus Categorías</h2>
                         <div className="flex flex-wrap gap-2 md:gap-4 items-center">
                             <input
                                 type="text"
@@ -99,31 +98,39 @@ export default function Index() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-200">
-                            {categorias.data.map((categoria) => (
-                                <tr key={categoria.id} className="hover:bg-gray-50 transition">
-                                    <td className="p-3 text-sm text-gray-800">{categoria.id}</td>
-                                    <td className="p-3 text-sm text-gray-800">{categoria.nombre}</td>
-                                    <td className="p-3 text-sm">
-                                        <span className={`font-semibold ${categoria.activa ? "text-green-600" : "text-red-600"}`}>
-                                            {categoria.activa ? "Activa" : "Inactiva"}
-                                        </span>
-                                    </td>
-                                    <td className="p-3 text-sm flex gap-2">
-                                        <button
-                                            onClick={() => router.get(`/categorias/${categoria.id}/edit`)}
-                                            className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-3 py-1 rounded-lg shadow"
-                                        >
-                                            📝
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(categoria.id)}
-                                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow"
-                                        >
-                                            🗑
-                                        </button>
+                            {categorias.data.length > 0 ? (
+                                categorias.data.map((categoria) => (
+                                    <tr key={categoria.id} className="hover:bg-gray-50 transition">
+                                        <td className="p-3 text-sm text-gray-800">{categoria.id}</td>
+                                        <td className="p-3 text-sm text-gray-800">{categoria.nombre}</td>
+                                        <td className="p-3 text-sm">
+                                            <span className={`font-semibold ${categoria.activa ? "text-green-600" : "text-red-600"}`}>
+                                                {categoria.activa ? "Activa" : "Inactiva"}
+                                            </span>
+                                        </td>
+                                        <td className="p-3 text-sm flex gap-2">
+                                            <button
+                                                onClick={() => router.get(`/categorias/${categoria.id}/edit`)}
+                                                className="bg-yellow-400 hover:bg-yellow-500 text-gray-800 px-3 py-1 rounded-lg shadow"
+                                            >
+                                                📝
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(categoria.id)}
+                                                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg shadow"
+                                            >
+                                                🗑
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={4} className="text-center text-gray-500 p-4">
+                                        No se encontraron categorías.
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
 

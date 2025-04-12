@@ -15,13 +15,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function Create({}: Props) {
     const { data, setData, post, processing, errors } = useForm({
-        DNI: "",
-        RTN: "",
-        NOMBRES: "",
-        APELLIDOS: "",
-        DIRECCION: "",
-        GENERO: "",
-        FECHA_NAC: "",
+        dni: "",
+        rtn: "",
+        nombres: "",
+        apellidos: "",
+        direccion: "",
+        genero: "",
+        fecha_nac: "",
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -36,108 +36,101 @@ export default function Create({}: Props) {
                 <div className="bg-white border rounded-xl shadow p-6 max-w-xl mx-auto w-full">
                     <h1 className="text-2xl font-bold mb-4">Crear Cliente</h1>
                     <form onSubmit={handleSubmit} className="space-y-4">
+                        {/* DNI */}
                         <div>
-                            <label htmlFor="DNI" className="block text-sm font-medium">
-                                DNI
-                            </label>
+                            <label htmlFor="dni" className="block text-sm font-medium">DNI</label>
                             <input
-                                id="DNI"
+                                id="dni"
                                 type="text"
-                                value={data.DNI}
-                                onChange={(e) => setData("DNI", e.target.value)}
+                                value={data.dni}
+                                onChange={(e) => setData("dni", e.target.value)}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.DNI && <p className="text-red-500 text-sm">{errors.DNI}</p>}
+                            {errors.dni && <p className="text-red-500 text-sm">{errors.dni}</p>}
                         </div>
 
+                        {/* RTN */}
                         <div>
-                            <label htmlFor="RTN" className="block text-sm font-medium">
-                                RTN
-                            </label>
+                            <label htmlFor="rtn" className="block text-sm font-medium">RTN</label>
                             <input
-                                id="RTN"
+                                id="rtn"
                                 type="text"
-                                value={data.RTN}
-                                onChange={(e) => setData("RTN", e.target.value)}
+                                value={data.rtn}
+                                onChange={(e) => setData("rtn", e.target.value)}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.RTN && <p className="text-red-500 text-sm">{errors.RTN}</p>}
+                            {errors.rtn && <p className="text-red-500 text-sm">{errors.rtn}</p>}
                         </div>
 
+                        {/* Nombres */}
                         <div>
-                            <label htmlFor="NOMBRES" className="block text-sm font-medium">
-                                Nombres
-                            </label>
+                            <label htmlFor="nombres" className="block text-sm font-medium">Nombres</label>
                             <input
-                                id="NOMBRES"
+                                id="nombres"
                                 type="text"
-                                value={data.NOMBRES}
-                                onChange={(e) => setData("NOMBRES", e.target.value)}
+                                value={data.nombres}
+                                onChange={(e) => setData("nombres", e.target.value)}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.NOMBRES && <p className="text-red-500 text-sm">{errors.NOMBRES}</p>}
+                            {errors.nombres && <p className="text-red-500 text-sm">{errors.nombres}</p>}
                         </div>
 
+                        {/* Apellidos */}
                         <div>
-                            <label htmlFor="APELLIDOS" className="block text-sm font-medium">
-                                Apellidos
-                            </label>
+                            <label htmlFor="apellidos" className="block text-sm font-medium">Apellidos</label>
                             <input
-                                id="APELLIDOS"
+                                id="apellidos"
                                 type="text"
-                                value={data.APELLIDOS}
-                                onChange={(e) => setData("APELLIDOS", e.target.value)}
+                                value={data.apellidos}
+                                onChange={(e) => setData("apellidos", e.target.value)}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.APELLIDOS && <p className="text-red-500 text-sm">{errors.APELLIDOS}</p>}
+                            {errors.apellidos && <p className="text-red-500 text-sm">{errors.apellidos}</p>}
                         </div>
 
+                        {/* Dirección */}
                         <div>
-                            <label htmlFor="DIRECCION" className="block text-sm font-medium">
-                                Dirección
-                            </label>
+                            <label htmlFor="direccion" className="block text-sm font-medium">Dirección</label>
                             <input
-                                id="DIRECCION"
+                                id="direccion"
                                 type="text"
-                                value={data.DIRECCION}
-                                onChange={(e) => setData("DIRECCION", e.target.value)}
+                                value={data.direccion}
+                                onChange={(e) => setData("direccion", e.target.value)}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.DIRECCION && <p className="text-red-500 text-sm">{errors.DIRECCION}</p>}
+                            {errors.direccion && <p className="text-red-500 text-sm">{errors.direccion}</p>}
                         </div>
 
-                      <div>
-    <label htmlFor="GENERO" className="block text-sm font-medium">
-        Género
-    </label>
-    <select
-        id="GENERO"
-        value={data.GENERO}
-        onChange={(e) => setData("GENERO", e.target.value)}
-        className="w-full border rounded px-3 py-2 mt-1"
-    >
-        <option value="">Seleccionar Género</option>
-        <option value="MUJER">Masculino</option>
-        <option value="HOMBRE">Femenino</option>
-
-    </select>
-    {errors.GENERO && <p className="text-red-500 text-sm">{errors.GENERO}</p>}
-</div>
-
+                        {/* Género */}
                         <div>
-                            <label htmlFor="FECHA_NAC" className="block text-sm font-medium">
-                                Fecha de Nacimiento
-                            </label>
+                            <label htmlFor="genero" className="block text-sm font-medium">Género</label>
+                            <select
+                                id="genero"
+                                value={data.genero}
+                                onChange={(e) => setData("genero", e.target.value)}
+                                className="w-full border rounded px-3 py-2 mt-1"
+                            >
+                                <option value="">Seleccionar Género</option>
+                                <option value="HOMBRE">Masculino</option>
+                                <option value="MUJER">Femenino</option>
+                            </select>
+                            {errors.genero && <p className="text-red-500 text-sm">{errors.genero}</p>}
+                        </div>
+
+                        {/* Fecha de Nacimiento */}
+                        <div>
+                            <label htmlFor="fecha_nac" className="block text-sm font-medium">Fecha de Nacimiento</label>
                             <input
-                                id="FECHA_NAC"
+                                id="fecha_nac"
                                 type="date"
-                                value={data.FECHA_NAC}
-                                onChange={(e) => setData("FECHA_NAC", e.target.value)}
+                                value={data.fecha_nac}
+                                onChange={(e) => setData("fecha_nac", e.target.value)}
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
-                            {errors.FECHA_NAC && <p className="text-red-500 text-sm">{errors.FECHA_NAC}</p>}
+                            {errors.fecha_nac && <p className="text-red-500 text-sm">{errors.fecha_nac}</p>}
                         </div>
 
+                        {/* Botón */}
                         <div className="flex justify-end">
                             <button
                                 type="submit"

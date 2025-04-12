@@ -9,7 +9,7 @@ class Categoria extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'activa'];
+    protected $fillable = ['nombre', 'activa', 'user_id'];
 
     protected $casts = [
         'activa' => 'boolean',
@@ -19,5 +19,10 @@ class Categoria extends Model
     public function productos()
     {
         return $this->hasMany(Producto::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

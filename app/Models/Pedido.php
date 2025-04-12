@@ -11,34 +11,31 @@ class Pedido extends Model
 
     protected $fillable = [
         'cliente_id',
-        'user_id',       // 👈 Agregado para permitir guardarlo con create()
+        'user_id',
         'total',
         'monto_pagado',
         'estado',
     ];
 
-    // 🔐 Asegura que siempre lleguen como floats al frontend
     protected $casts = [
         'total' => 'float',
         'monto_pagado' => 'float',
     ];
 
-    // Relación con el cliente (muchos pedidos pertenecen a un cliente)
     public function cliente()
     {
         return $this->belongsTo(Cliente::class);
     }
 
-    // Relación con productos a través de la tabla pivote
     public function productos()
     {
         return $this->belongsToMany(Producto::class, 'pedido_producto')
-                    ->withPivot(['cantidad', 'precio', 'total'])
+                    ->withPivot(['cantidad', 'precio', 'total', 'isv_porcentaje', 'isv_total', 'total_con_isv'])
                     ->withTimestamps();
     }
 
-    // Relación con el usuario que creó el pedido
-    public function usuario()
+    // ✅ Nombre de relación corregido
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }

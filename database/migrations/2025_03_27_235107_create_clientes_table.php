@@ -12,21 +12,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-
         Schema::create('clientes', function (Blueprint $table) {
             $table->id();
-            $table->string('DNI',13);
-            $table->string('RTN',14);
-            $table->string('NOMBRES',150);
-            $table->string('APELLIDOS',150);
-            $table->string('DIRECCION',200);
-            $table->string('GENERO',6);
-            $table->date('FECHA_NAC');
-            $table->date('FECHA_CREACION')->default(DB::raw('CURRENT_DATE'));
-            $table->boolean('ACTIVO')->default(true);
+            $table->string('dni', 13);
+            $table->string('rtn', 14);
+            $table->string('nombres', 150);
+            $table->string('apellidos', 150);
+            $table->string('direccion', 200);
+            $table->string('genero', 6);
+            $table->date('fecha_nac');
+            $table->date('fecha_creacion')->default(DB::raw('CURRENT_DATE'));
+            $table->boolean('activo')->default(true);
+            $table->unsignedBigInteger('user_id');
             $table->timestamps();
+
+            // Relación con la tabla users
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
-        
     }
 
     /**

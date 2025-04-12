@@ -38,4 +38,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Producto::class);
     }
+
+    public function pagosPedidos()
+    {
+        return $this->hasMany(PagoPedido::class, 'user_id');
+    }
 }

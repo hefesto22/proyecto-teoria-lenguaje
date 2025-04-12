@@ -20,10 +20,13 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: "Crear", href: "#" },
 ];
 
+// ... importaciones sin cambios
+
 export default function Create({ categorias }: Props) {
     const [data, setData] = useState({
         nombre: "",
         precio: "",
+        isv: "", // 👈 Nuevo campo
         stock: "",
         categoria_id: categorias[0]?.id ?? 0,
         imagenes: [] as File[],
@@ -62,6 +65,7 @@ export default function Create({ categorias }: Props) {
         const formData = new FormData();
         formData.append("nombre", data.nombre);
         formData.append("precio", String(data.precio));
+        formData.append("isv", data.isv !== "" ? String(data.isv) : ""); // 👈 Asegura nullable
         formData.append("stock", String(data.stock));
         formData.append("categoria_id", String(data.categoria_id));
 
@@ -106,6 +110,18 @@ export default function Create({ categorias }: Props) {
                                 className="w-full border rounded px-3 py-2 mt-1"
                             />
                             {errors.precio && <p className="text-red-500 text-sm">{errors.precio}</p>}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium">ISV (opcional)</label>
+                            <input
+                                type="number"
+                                step="0.01"
+                                value={data.isv}
+                                onChange={(e) => setData({ ...data, isv: e.target.value })}
+                                className="w-full border rounded px-3 py-2 mt-1"
+                            />
+                            {errors.isv && <p className="text-red-500 text-sm">{errors.isv}</p>}
                         </div>
 
                         <div>
@@ -187,3 +203,4 @@ export default function Create({ categorias }: Props) {
         </AppLayout>
     );
 }
+

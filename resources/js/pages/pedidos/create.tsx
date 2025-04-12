@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 
 interface Props {
   clientes: Cliente[]
-  productos: (Producto & { imagen?: string })[]
+  productos: (Producto & { imagen?: string, isv: number })[]
 }
 
 export default function CreatePedido({ clientes, productos }: Props) {
@@ -18,6 +18,7 @@ export default function CreatePedido({ clientes, productos }: Props) {
       id: number
       cantidad: number
       precio: number
+      isv: number
     }[],
     monto_pagado: 0,
   })
@@ -29,7 +30,6 @@ export default function CreatePedido({ clientes, productos }: Props) {
     const prodId = Number(productoSeleccionado)
     const producto = productos.find(p => p.id === prodId)
     if (!producto || producto.stock <= 0) return
-
     if (data.productos.find(p => p.id === prodId)) return
 
     setData('productos', [
@@ -38,6 +38,7 @@ export default function CreatePedido({ clientes, productos }: Props) {
         id: producto.id,
         cantidad: 1,
         precio: Number(producto.precio),
+        isv: Number(producto.isv),
       },
     ])
     setProductoSeleccionado('')
@@ -45,8 +46,7 @@ export default function CreatePedido({ clientes, productos }: Props) {
 
   const actualizarCantidad = (id: number, cantidad: number) => {
     const prod = productos.find(p => p.id === id)
-    if (!prod) return
-    if (cantidad > prod.stock) return
+    if (!prod || cantidad < 1 || cantidad > prod.stock) return
     setData('productos', data.productos.map(p =>
       p.id === id ? { ...p, cantidad } : p
     ))
@@ -57,12 +57,23 @@ export default function CreatePedido({ clientes, productos }: Props) {
   }
 
   const calcularTotal = () =>
-    data.productos.reduce((total, p) => total + Number(p.precio) * p.cantidad, 0)
+    data.productos.reduce((total, p) => {
+      const isvUnitario = p.precio * (p.isv / 100)
+      return total + (p.precio + isvUnitario) * p.cantidad
+    }, 0)
+
+  const calcularISVTotal = () =>
+    data.productos.reduce((total, p) => {
+      const isvUnitario = p.precio * (p.isv / 100)
+      return total + isvUnitario * p.cantidad
+    }, 0)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     post('/pedidos')
   }
+
+  const total = calcularTotal()
 
   return (
     <AppLayout breadcrumbs={[
@@ -77,7 +88,7 @@ export default function CreatePedido({ clientes, productos }: Props) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Cliente con búsqueda dinámica */}
+          {/* Cliente */}
           <div className="relative">
             <Label>Cliente</Label>
             <Input
@@ -131,7 +142,7 @@ export default function CreatePedido({ clientes, productos }: Props) {
             </div>
           </div>
 
-          {/* Lista de productos agregados */}
+          {/* Lista de productos */}
           {data.productos.length > 0 && (
             <div>
               <h2 className="font-semibold mb-2">Productos Seleccionados</h2>
@@ -141,6 +152,8 @@ export default function CreatePedido({ clientes, productos }: Props) {
                     <th className="px-2 py-1 text-left">Producto</th>
                     <th className="px-2 py-1 text-left">Cantidad</th>
                     <th className="px-2 py-1 text-left">Precio</th>
+                    <th className="px-2 py-1 text-left">ISV</th>
+                    <th className="px-2 py-1 text-left">Stock</th>
                     <th className="px-2 py-1 text-left">Total</th>
                     <th></th>
                   </tr>
@@ -148,6 +161,9 @@ export default function CreatePedido({ clientes, productos }: Props) {
                 <tbody>
                   {data.productos.map((p) => {
                     const prod = productos.find(prod => prod.id === p.id)!
+                    const isvUnitario = p.precio * (p.isv / 100)
+                    const totalPorProducto = (p.precio + isvUnitario) * p.cantidad
+                    const stockRestante = prod.stock - p.cantidad
                     return (
                       <tr key={p.id} className="border-t">
                         <td className="px-2 py-1 flex items-center gap-2">
@@ -162,17 +178,17 @@ export default function CreatePedido({ clientes, productos }: Props) {
                             min={1}
                             max={prod.stock}
                             value={p.cantidad}
-                            onChange={e =>
-                              actualizarCantidad(p.id, parseInt(e.target.value))
-                            }
+                            onChange={e => actualizarCantidad(p.id, parseInt(e.target.value))}
                             className="w-20"
                           />
                           {p.cantidad > prod.stock && (
                             <p className="text-xs text-red-500">Stock insuficiente</p>
                           )}
                         </td>
-                        <td className="px-2 py-1">L. {Number(p.precio).toFixed(2)}</td>
-                        <td className="px-2 py-1">L. {(Number(p.precio) * p.cantidad).toFixed(2)}</td>
+                        <td className="px-2 py-1">L. {p.precio.toFixed(2)}</td>
+                        <td className="px-2 py-1">{p.isv}%</td>
+                        <td className="px-2 py-1">{stockRestante}</td>
+                        <td className="px-2 py-1">L. {totalPorProducto.toFixed(2)}</td>
                         <td>
                           <Button
                             type="button"
@@ -190,18 +206,29 @@ export default function CreatePedido({ clientes, productos }: Props) {
             </div>
           )}
 
-          {/* Total y pago */}
-          <div>
-            <Label>Total: <strong>L. {calcularTotal().toFixed(2)}</strong></Label>
+          {/* Totales */}
+          <div className="space-y-2">
+            <p className="hidden">Total ISV: L. {calcularISVTotal().toFixed(2)}</p>
+            <p className="font-semibold text-lg">Total a Pagar: L. {calcularTotal().toFixed(2)}</p>
           </div>
+
+          {/* Monto pagado */}
           <div>
             <Label>Monto Pagado</Label>
             <Input
               type="number"
-              value={data.monto_pagado}
-              onChange={e => setData('monto_pagado', parseFloat(e.target.value))}
+              step="0.01"
+              value={data.monto_pagado === 0 ? '' : data.monto_pagado}
+              onChange={e => {
+                const valor = parseFloat(e.target.value)
+                const valido = isNaN(valor) ? 0 : Math.min(valor, total)
+                setData('monto_pagado', valido)
+              }}
               min={0}
             />
+            <p className="text-sm text-muted-foreground mt-1">
+              Visual: <strong>L. {data.monto_pagado.toFixed(2)}</strong>
+            </p>
             {errors.monto_pagado && <p className="text-red-500 text-sm">{errors.monto_pagado}</p>}
           </div>
 

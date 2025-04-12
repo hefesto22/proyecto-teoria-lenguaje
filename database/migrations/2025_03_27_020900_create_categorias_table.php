@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->boolean('activa')->default(true);
+            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // 👈 Relación con users
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.

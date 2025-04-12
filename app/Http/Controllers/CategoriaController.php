@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class CategoriaController extends Controller
@@ -14,8 +15,9 @@ class CategoriaController extends Controller
     public function index(Request $request)
     {
         $categorias = Categoria::query()
+            ->where('user_id', Auth::id()) // 👈 Solo las del usuario logueado
             ->when($request->search, fn($q) =>
-                $q->where('nombre', 'like', '%' . $request->search . '%'))
+            $q->where('nombre', 'like', '%' . $request->search . '%'))
             ->orderBy('nombre')
             ->paginate(10)
             ->withQueryString();
@@ -26,6 +28,7 @@ class CategoriaController extends Controller
         ]);
     }
 
+
     /**
      * Mostrar formulario para crear una categoría.
      */
@@ -33,7 +36,7 @@ class CategoriaController extends Controller
     {
         return Inertia::render('categorias/create');
     }
-    
+
     /**
      * Guardar una nueva categoría.
      */
@@ -46,6 +49,7 @@ class CategoriaController extends Controller
         Categoria::create([
             'nombre' => $request->nombre,
             'activa' => true,
+            'user_id' => Auth::id(), // 👈 Asociar al usuario autenticado
         ]);
 
         return redirect()->route('categorias.index')->with('success', 'Categoría creada correctamente.');

@@ -179,12 +179,13 @@ export default function PedidosIndex({ pedidos, filtro: filtroInicial }: Props) 
 
                       {/* FACTURA solo si está pagado */}
                       {pedido.estado === 'pagado' && (
-                        <Link href={`/facturas/${pedido.id}`}>
-                          <Button size="icon" variant="secondary" title="Generar Factura">
-                            <FileText className="w-4 h-4" />
-                          </Button>
-                        </Link>
-                      )}
+  <Link href={`/pedidos/${pedido.id}`}>
+    <Button size="icon" variant="secondary" title="Ver Factura">
+      <FileText className="w-4 h-4" />
+    </Button>
+  </Link>
+)}
+
                     </td>
                   </tr>
                 ))}

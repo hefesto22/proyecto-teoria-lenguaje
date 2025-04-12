@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cliente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class ClienteController extends Controller
@@ -11,23 +12,21 @@ class ClienteController extends Controller
     /**
      * Display a listing of the resource.
      */
-   public function index(Request $request)
+    public function index(Request $request)
     {
-        // Se realiza la consulta de los clientes, aplicando el filtro de búsqueda
         $clientes = Cliente::query()
-            ->when($request->search, fn($q) =>
-                $q->where('NOMBRES', 'like', '%' . $request->search . '%'))
-            ->orderBy('NOMBRES')
+            ->where('user_id', Auth::id()) // 👈 Solo clientes del usuario en sesión
+            ->when($request->search, fn ($q) =>
+                $q->where('nombres', 'like', '%' . $request->search . '%'))
+            ->orderBy('nombres')
             ->paginate(10)
             ->withQueryString();
-
-        // Retornamos los datos a la vista Inertia
+    
         return Inertia::render('clientes/index', [
-            'clientes' => $clientes, // Aquí cambié a 'clientes' en lugar de 'categorias' para que sea consistente
+            'clientes' => $clientes,
             'filters' => $request->only(['search']),
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      */
@@ -39,33 +38,24 @@ class ClienteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
-{
-    $validated = $request->validate([
-        'DNI' => 'required|string|max:13',
-        'RTN' => 'required|string|max:14',
-        'NOMBRES' => 'required|string|max:150',
-        'APELLIDOS' => 'required|string|max:150',
-        'DIRECCION' => 'required|string|max:200',
-        'GENERO' => 'required|string|max:6',
-        'FECHA_NAC' => 'required|date',
-    ]);
-
-    // Asegúrate de agregar el campo ACTIVO con valor true
-    $validated['ACTIVO'] = true;
-
-    // Crear el cliente con los datos validados
-    Cliente::create($validated);
-
-    return redirect()->route('clientes.index')->with('success', 'Cliente creado con éxito.');
-}
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Cliente $cliente)
+    public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'dni' => 'required|string|max:13',
+            'rtn' => 'required|string|max:14',
+            'nombres' => 'required|string|max:150',
+            'apellidos' => 'required|string|max:150',
+            'direccion' => 'required|string|max:200',
+            'genero' => 'required|string|max:6',
+            'fecha_nac' => 'required|date',
+        ]);
+
+        $validated['activo'] = true;
+        $validated['user_id'] = Auth::id(); // ← Se guarda el usuario autenticado
+
+        Cliente::create($validated);
+
+        return redirect()->route('clientes.index')->with('success', 'Cliente creado con éxito.');
     }
 
     /**
@@ -73,44 +63,32 @@ public function store(Request $request)
      */
     public function edit(Cliente $cliente)
     {
-         // Retornar la vista de edición con los datos del cliente
-         return Inertia::render('clientes/edit', [
-        'cliente' => $cliente,
-          ]);
+        return Inertia::render('clientes/edit', [
+            'cliente' => $cliente,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'dni' => 'required|string|max:13',
+            'rtn' => 'nullable|string|max:14',
+            'nombres' => 'required|string|max:150',
+            'apellidos' => 'required|string|max:150',
+            'direccion' => 'nullable|string|max:200',
+            'genero' => 'required|string|max:6',
+            'fecha_nac' => 'required|date',
+            'activo' => 'required|boolean',
+        ]);
 
-   public function update(Request $request, $id)
-{
-    $request->validate([
-        'DNI' => 'required|string|max:20',
-        'RTN' => 'nullable|string|max:14',
-        'NOMBRES' => 'required|string|max:100',
-        'APELLIDOS' => 'required|string|max:100',
-        'DIRECCION' => 'nullable|string|max:255',
-        'GENERO' => 'required|string|max:10',
-        'FECHA_NAC' => 'required|date',
-        'ACTIVO' => 'required|boolean',
-    ]);
+        $cliente = Cliente::findOrFail($id);
+        $cliente->update($validated);
 
-    $cliente = Cliente::findOrFail($id);
-    $cliente->update([
-        'DNI' => $request->DNI,
-        'RTN' => $request->RTN,
-        'NOMBRES' => $request->NOMBRES,
-        'APELLIDOS' => $request->APELLIDOS,
-        'DIRECCION' => $request->DIRECCION,
-        'GENERO' => $request->GENERO,
-        'FECHA_NAC' => $request->FECHA_NAC,
-        'ACTIVO' => $request->ACTIVO,
-    ]);
-
-    return redirect()->route('clientes.index')->with('success', 'Cliente actualizado correctamente');
-}
-
+        return redirect()->route('clientes.index')->with('success', 'Cliente actualizado correctamente.');
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -119,6 +97,6 @@ public function store(Request $request)
     {
         $cliente->delete();
 
-        return redirect()->route('clientes.index')->with('success', 'Cliente eliminada correctamente.');
+        return redirect()->route('clientes.index')->with('success', 'Cliente eliminado correctamente.');
     }
 }

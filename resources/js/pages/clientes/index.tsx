@@ -8,9 +8,9 @@ import type { PageProps as InertiaPageProps } from "@inertiajs/core";
 
 interface Cliente {
     id: number;
-    DNI: string; // Aquí asumimos que el campo de DNI se llama "DNI"
-    NOMBRES: string;
-    ACTIVO: boolean; // Asegúrate de que "activa" sea un campo booleano
+    dni: string;
+    nombres: string;
+    activo: boolean;
 }
 
 interface PaginationLink {
@@ -29,7 +29,7 @@ interface Props extends InertiaPageProps {
     filters: {
         search?: string;
     };
-    [key: string]: unknown; // ✅ para que sea compatible con Inertia
+    [key: string]: unknown;
 }
 
 export default function Index() {
@@ -102,15 +102,15 @@ export default function Index() {
                         <tbody className="divide-y divide-gray-200">
                             {clientes.data.map((cliente) => (
                                 <tr key={cliente.id} className="hover:bg-gray-50 transition">
-                                    <td className="p-3 text-sm text-gray-800">{cliente.DNI}</td>
-                                    <td className="p-3 text-sm text-gray-800">{cliente.NOMBRES}</td>
+                                    <td className="p-3 text-sm text-gray-800">{cliente.dni}</td>
+                                    <td className="p-3 text-sm text-gray-800">{cliente.nombres}</td>
                                     <td className="p-3 text-sm">
                                         <span
                                             className={`font-semibold ${
-                                                cliente.ACTIVO ? "text-green-600" : "text-red-600"
+                                                cliente.activo ? "text-green-600" : "text-red-600"
                                             }`}
                                         >
-                                            {cliente.ACTIVO ? "Activo" : "Inactivo"}
+                                            {cliente.activo ? "Activo" : "Inactivo"}
                                         </span>
                                     </td>
                                     <td className="p-3 text-sm flex gap-2">
